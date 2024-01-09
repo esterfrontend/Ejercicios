@@ -1,5 +1,5 @@
 const factorial = (number) => {
-    if (number === 0 || number === 1) {
+    if (number === 1) {
       return 1;
     } else {
         let result = 1
