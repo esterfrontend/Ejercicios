@@ -12,22 +12,33 @@ app.get('/:department', function(req, res) {
 
 app.get('/:department/:name/:quantity', function(req, res) {
     const {department, name, quantity} = req.params
-    const quantityNumber = Number(quantity)
     
     const indexDepartment = almacen.findIndex(dep => dep.name === department)
+    if(indexDepartment < 0 ) {
+        res.send(`El departamento ${department} no existe`)
+        return
+    }
+
     const indexProduct = almacen[indexDepartment].products.findIndex(prod => prod.name === name)
+    if(indexProduct < 0 ) {
+        res.send(`El producto ${name} no existe`)
+        return
+    }
+    
     const product = almacen[indexDepartment].products[indexProduct];
 
-
-    if(quantityNumber > product.stock) {
+    if(quantity > product.stock) {
         res.send(`Solo hay disponibles ${product.stock} productos.`)
-    } else {
-        cesta.push({
-            name,
-            quantity: quantityNumber
-        })
-        res.send(cesta)   
+        return
     }
+
+    product.stock -= quantity
+
+    cesta.push({
+        name,
+        quantity
+    })
+    res.send(cesta)   
 })
 
 
