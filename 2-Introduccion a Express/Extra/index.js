@@ -10,25 +10,6 @@ app.get('/:department', function(req, res) {
     res.send(showProducts(req.params.department))
 })
 
-// FALTA!!
-// app.get('/zapatillas/:name/:quantity', function(req, res) {
-//     const name = req.params.name
-//     let quantityParam = req.params.quantity
-//     let quantity = Number(quantityParam)
-//     let stock = 0
-    
-//     cesta.push({
-//         name,
-//         quantity
-//     })
-    
-//     if(Number(quantity) > stock) {
-//         res.send(`Solo hay disponibles ${stock} productos.`)
-//     }
-
-//     res.send(cesta)
-// })
-
 app.get('/:department/:name/:quantity', function(req, res) {
     const {department, name, quantity} = req.params
     const quantityNumber = Number(quantity)
