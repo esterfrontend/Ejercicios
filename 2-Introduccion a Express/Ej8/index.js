@@ -6,7 +6,7 @@ const app = express()
 
 app.get('/', function(req, res) {
     const random = randomNumber()
-    array[random] = array[random] + 1
+    array[random] ++
 
     res.send(array)
 })
@@ -18,4 +18,9 @@ app.get('/borrar/:numero', function(req, res) {
     res.send(array)
 })
 
-app.listen(3000)
+
+app.listen(process.env.PORT || 3000, (e) => {
+    e
+    ? console.log('Servidor no conectado')
+    : console.log('Servidor conectado a puerto:' + (process.env.PORT || 3000))
+})

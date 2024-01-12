@@ -6,7 +6,7 @@ const app = express()
 
 app.get('/', function(req, res) {
     const random = randomNumber()
-    array[random] = array[random] + 1
+    array[random] ++
 
     res.send(array)
 })

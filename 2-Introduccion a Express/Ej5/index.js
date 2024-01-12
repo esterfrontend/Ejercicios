@@ -8,22 +8,24 @@ const person = {
     age: '32'
 }
 
-app.get('/name=:name', function(req, res) {
-    const name = req.params.name
-    person.name = name
+app.get('/name/:name', function(req, res) {
+    person.name = req.params.name
     res.send(person)
 })
 
-app.get('/lastname=:lastname', function(req, res) {
-    const lastName = req.params.lastname
-    person.lastName = lastName
+app.get('/lastname/:lastname', function(req, res) {
+    person.lastName = req.params.lastname
     res.send(person)
 })
 
-app.get('/age=:age', function(req, res) {
-    const age = req.params.age
-    person.age = age
+app.get('/age/:age', function(req, res) {
+    person.age = req.params.age
     res.send(person)
 })
 
-app.listen(3000)
+
+app.listen(process.env.PORT || 3000, (e) => {
+    e
+    ? console.log('Servidor no conectado')
+    : console.log('Servidor conectado a puerto:' + (process.env.PORT || 3000))
+})

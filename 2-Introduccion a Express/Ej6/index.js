@@ -5,8 +5,7 @@ const app = express()
 const students = ['Marina', 'Nuria', 'Víctor', 'Antonio', 'Santiago', 'María', 'Gloria', 'Mildry', 'Ester']
 
 app.get('/:newname', function(req, res) {
-    const newName = req.params.newname
-    students.push(newName)
+    students.push(req.params.newname)
     res.send(students)
 })
 

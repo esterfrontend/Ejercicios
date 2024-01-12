@@ -1,107 +1,72 @@
 const express = require('express')
-const { showProducts, createDocument } = require('./functions')
+const almacen = require('./almacen')
 
 const app = express()
 
 
-const almacen = [
-    {
-        0: {
-            name: 'Bel-Air',
-            price: '80,10',
-            stock: 3
-        },
-        1: {
-            name: 'Coconut',
-            price: '103,05',
-            stock: 5
-        },
-        2: {
-            name: 'Arthur',
-            price: '89,10',
-            stock: 2
-        },
-        3: {
-            name: 'Venice',
-            price: '103,05',
-            stock: 5
-        },
-    },
-    {
-        0: {
-            name: 'Lincoln',
-            price: '51,92',
-            stock: 2
-        },
-        1: {
-            name: 'Wichita',
-            price: '51,92',
-            stock: 4
-        },
-        2: {
-            name: 'Indigo',
-            price: '58,41',
-            stock: 3
-        },
-        3: {
-            name: 'Tennessee',
-            price: '64,90',
-            stock: 0
-        },
-    },
-]
-
 const cesta = []
 
-app.get('/zapatillas', function(req, res) {
-    // showProducts(almacen[0])
-    const showTable = () => {
-        createDocument()
-        // showProducts(almacen[0])
-    }
-    res.send(showTable())
+app.get('/:department', function(req, res) {
+    res.send(showProducts(req.params.department))
 })
 
-app.get('/sudaderas', function(req, res) {
-    res.send(almacen[1])
-})
-
-app.get('/zapatillas/:name/:quantity', function(req, res) {
-    const name = req.params.name
-    let quantityParam = req.params.quantity
-    let quantity = Number(quantityParam)
-    let stock = 0
-    for(productKey in almacen[0]) {
-        const product = almacen[0][productKey]
-        if (product.name === name) {
-            stock = product.stock
-            break;
-        }
-    }
-
-    if(cesta.length !== 0) {
-        for(productKey in cesta) {
-            const productInCart = cesta[productKey]
-            if (productInCart.name === name) {
-                // console.log('quantity', quantity)
-                // console.log('quantity: ', quantity += productInCart.quantity)
-                quantity += productInCart.quantity
-                break;
-            }
-        }
-    }
-
-    cesta.push({
-        name,
-        quantity
-    })
+// FALTA!!
+// app.get('/zapatillas/:name/:quantity', function(req, res) {
+//     const name = req.params.name
+//     let quantityParam = req.params.quantity
+//     let quantity = Number(quantityParam)
+//     let stock = 0
     
-    if(Number(quantity) > stock) {
-        res.send(`Solo hay disponibles ${stock} productos.`)
-    }
+//     cesta.push({
+//         name,
+//         quantity
+//     })
+    
+//     if(Number(quantity) > stock) {
+//         res.send(`Solo hay disponibles ${stock} productos.`)
+//     }
 
-    res.send(cesta)
+//     res.send(cesta)
+// })
+
+app.get('/:department/:name/:quantity', function(req, res) {
+    const {department, name, quantity} = req.params
+    const quantityNumber = Number(quantity)
+    
+    const indexDepartment = almacen.findIndex(dep => dep.name === department)
+    const indexProduct = almacen[indexDepartment].products.findIndex(prod => prod.name === name)
+    const product = almacen[indexDepartment].products[indexProduct];
+
+
+    if(quantityNumber > product.stock) {
+        res.send(`Solo hay disponibles ${product.stock} productos.`)
+    } else {
+        cesta.push({
+            name,
+            quantity: quantityNumber
+        })
+        res.send(cesta)   
+    }
 })
 
 
-app.listen(3000)
+const showProducts = (department) => {
+    let table = ''
+    
+    let index = almacen.findIndex(dep => dep.name === department)
+    
+    if(index === -1) return 'Ese departamento no existe'
+
+    almacen[index].products.forEach(producto => {
+        table += `<tr><td>${producto.name}</td><td>${producto.price}</td><td>${producto.stock}</td></tr>`
+    });
+    
+    return `<table>${table}</table>`
+}
+
+
+app.listen(process.env.PORT || 3000, (e) => {
+    e
+    ? console.log('Servidor no conectado')
+    : console.log('Servidor conectado a puerto:' + (process.env.PORT || 3000))
+})
