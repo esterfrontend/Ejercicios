@@ -4,22 +4,22 @@ const almacen = [
         products: [
             {
                 name: 'Bel-Air',
-                price: '80,10',
+                price: '50',
                 stock: 3
             },
             {
                 name: 'Coconut',
-                price: '103,05',
+                price: '103',
                 stock: 5
             },
             {
                 name: 'Arthur',
-                price: '89,10',
+                price: '89',
                 stock: 2
             },
             {
                 name: 'Venice',
-                price: '103,05',
+                price: '100',
                 stock: 5
             },
         ]
@@ -29,22 +29,22 @@ const almacen = [
         products: [
             {
                 name: 'Lincoln',
-                price: '51,92',
+                price: '51',
                 stock: 2
             },
             {
                 name: 'Wichita',
-                price: '51,92',
+                price: '51',
                 stock: 4
             },
             {
                 name: 'Indigo',
-                price: '58,41',
+                price: '58',
                 stock: 3
             },
             {
                 name: 'Tennessee',
-                price: '64,90',
+                price: '64',
                 stock: 0
             },
         ]

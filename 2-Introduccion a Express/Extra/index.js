@@ -6,11 +6,11 @@ const app = express()
 
 const cesta = []
 
-app.get('/:department', function(req, res) {
+app.get('departamento/:department', function(req, res) {
     res.send(showProducts(req.params.department))
 })
 
-app.get('/:department/:name/:quantity', function(req, res) {
+app.get('/comprar/:department/:name/:quantity', function(req, res) {
     const {department, name, quantity} = req.params
     
     const indexDepartment = almacen.findIndex(dep => dep.name === department)
@@ -34,11 +34,27 @@ app.get('/:department/:name/:quantity', function(req, res) {
 
     product.stock -= quantity
 
+    const price = product.price * quantity
+
     cesta.push({
         name,
-        quantity
+        quantity,
+        price
     })
-    res.send(cesta)   
+    res.send(cesta)
+})
+
+app.get('/cesta', function(req, res) {
+    res.send(cesta)
+})
+
+app.get('/checkout', function(req, res) {
+    let total = 0
+    cesta.forEach(el => {
+        total += Number(el.price)
+    });
+    
+    res.send(`Total: ${total}€`)
 })
 
 
