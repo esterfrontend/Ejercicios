@@ -11,14 +11,14 @@ app.get('/', function(req, res) {
 
 app.get('/sumar-animal', function(req, res) {
     const {nombre, edad, tipo} = req.query
+    edad = parseInt(edad)
     animales.push({nombre, edad, tipo})
-    res.send(muestraAnimales(animales))
+    res.send({mensaje: `${nombre} añadido`, animales: animales})
 })
 
 app.get('/adoptar', function(req, res) {
     const nombre = req.query.nombre
     const indice = animales.findIndex(el => nombre === el.nombre)
-    console.log(indice)
     if(indice < 0) {
         return (muestraAnimales(animales))
     }
