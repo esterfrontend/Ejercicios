@@ -11,8 +11,8 @@ db.samples_friends.find({$and: [{season: 1}, {number: { $lte: 5}}]})
 # 6
 db.samples_friends.find({name: /^The One/i})
 # 7
-db.samples_friends.find({name: /Chandler/})
+db.samples_friends.find({name: /Chandler/i})
 # 8
-db.samples_friends.find({$and: [{season: 3}, {summary: /Ross/}]})
+db.samples_friends.find({$and: [{season: 3}, {summary: /Ross/i}]})
 
 
