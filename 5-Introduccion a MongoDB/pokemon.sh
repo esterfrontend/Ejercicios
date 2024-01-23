@@ -25,11 +25,11 @@ db.samples_pokemon.find({egg: "Not in Eggs"})
 # 13
 db.samples_pokemon.find({$or: [{multipliers: null}, {candy_count: {$gte: 100}}]})
 # 14
-db.samples_pokemon.find({$and: [{candy_count: {$gt: 25}}, {spawn_time: {$lt: 15}}, {avg_spawns: {$gt: 40}}]})
+db.samples_pokemon.find({$and: [{candy_count: {$gt: 25}}, {spawn_time: {$lt: '15:00'}}, {avg_spawns: {$gt: 40}}]})
 # 15
 db.samples_pokemon.find({candy_count: {$gt: 50}}).limit(3)
 # 16
-db.samples_pokemon.find({$and: [{type: "Ground"}, {weaknesses: {$not: /^Grass$/}}]})
+db.samples_pokemon.find({$and: [{type: "Ground"}, {weaknesses: {$not: /^Grass$/i}}]})
 # 17
 db.samples_pokemon.find().sort({candy_count: -1})
 # 18
