@@ -13,11 +13,11 @@ SELECT * FROM `marvel` WHERE ALIGN LIKE 'Neutral Characters';
 -- 7
 SELECT * FROM `marvel` WHERE GSM LIKE '';
 -- 8
-SELECT * FROM `marvel` WHERE ALIVE LIKE 'Living Characters' AND APPEARANCES <= 220;
+SELECT * FROM `marvel` WHERE ALIVE LIKE 'Living Characters' AND APPEARANCES <= 50;
 -- 9
 SELECT * FROM `marvel` WHERE EYE != 'Blue Eyes' AND EYE != 'Brown Eyes';
 -- 10
-SELECT * FROM `marvel` WHERE APPEARANCES > 50 AND APPEARANCES < 250;
+SELECT * FROM `marvel` WHERE APPEARANCES > 50 AND APPEARANCES < 100;
 -- 11
 SELECT * FROM `marvel` WHERE SEX LIKE 'Female Characters' AND ALIVE LIKE 'Deceased Characters';
 -- 12
