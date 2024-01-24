@@ -9,9 +9,9 @@ SELECT * FROM pokemon WHERE Speed > 90
 -- 5
 SELECT * FROM pokemon ORDER BY Total DESC
 -- 6
-SELECT * FROM pokemon Legendary = True
+SELECT * FROM pokemon WHERE Legendary = 'True'
 -- 7
-SELECT * FROM pokemon WHERE Legendary = 'True';
+SELECT * FROM pokemon WHERE Generation = 2
 -- 8
 SELECT Name, `Type 1`, `Type 2`  FROM pokemon WHERE Generation = 2;
 -- 9
