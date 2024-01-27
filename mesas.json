@@ -1,0 +1,43 @@
+[{
+            "tamanyo":"100x70x60",
+            "color":"negro",
+            "material":"madera",
+            "patas": 4
+        },
+        {
+            "tamanyo":"140x80x90",
+            "color":"transparente",
+            "material":"cristal",
+            "patas": 3
+        },
+        {
+            "tamanyo":"180x90x95",
+            "color":"blanco",
+            "material":"madera",
+            "patas": 4
+        },
+        {
+            "tamanyo":"100x70x60",
+            "color":"haya",
+            "material":"madera",
+            "patas": 4
+        },
+        {
+            "tamanyo":"50x50x40",
+            "color":"negro",
+            "material":"plástico",
+            "patas": 1
+        },
+        {
+            "tamanyo":"140x80x90",
+            "color":"blanco",
+            "material":"metal",
+            "patas": 1
+        },
+        {
+            "tamanyo":"150x90x86",
+            "color":"azul",
+            "material":"plástico",
+            "patas": 3
+        }
+    ]
