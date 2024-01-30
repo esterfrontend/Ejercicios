@@ -22,7 +22,6 @@ app.get('/api/mesas', async (req, res) => {
     try {
         const results = await app.locals.db.collection('mesas').find({}).toArray();
         res.send({mensaje: "Estos son los resultados: ", results});
-
     } catch (error) {
         console.error('Error fetching ships:', error);
         res.status(500).send('Internal Server Error');
