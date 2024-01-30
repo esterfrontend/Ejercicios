@@ -70,21 +70,34 @@ app.delete('/api/borrarLibro/:titulo', async (req, res) => {
 
 const muestraLibros = (libros) => {
     let lista = ''
+
     libros.forEach(libro => lista += 
         `<li>
             ${libro.titulo}
             <button type="submit" onclick="leer('${libro.titulo}')">Marcar como leído</button>
-            <button type="submit" onclick="eliminar('${libro.titulo}')">Eliminar</button>
+            <button type="submit" onclick="borrar('${libro.titulo}')">Borrar</button>
         </li>`)
     return `<ul>${lista}</ul>`
 }
 
 function leer(titulo) {
-
+    fetch(`/api/editarLibro/${libro.titulo}`, {
+        method: "PUT"
+    })
+    .then((res) => res.json())
+    .then((datos) => {
+        console.log(datos)
+    })
 }
 
-function eliminar(titulo) {
-    
+function borrar(titulo) {
+    fetch(`/api/borrarLibro/${libro.titulo}`, {
+        method: "PUT"
+    })
+    .then((res) => res.json())
+    .then((datos) => {
+        console.log(datos)
+    })
 }
 
 
