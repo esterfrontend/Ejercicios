@@ -53,26 +53,6 @@ app.post('/api/nuevaSerie', async (req, res)=>{
     }
 })
 
-// app.put('/api/editarLibro/:titulo', async(req,res)=>{
-//     try {
-//         const results = await app.locals.db.collection('libros').updateOne({titulo: req.params.titulo}, {$set: {leido: true}})
-//         res.send({mensaje: "Libro leído.", results})        
-//     } catch (error) {
-//         console.error('Error en la peticion')
-//         res.status(500).send('Internal Server Error')
-//     }
-// })
-
-// app.delete('/api/borrarLibro/:titulo', async (req, res) => {
-//     try {
-//         const results = await app.locals.db.collection('libros').deleteOne({titulo: req.params.titulo});
-//         res.send({mensaje: "Libro eliminado.", results});
-//     } catch (error) {
-//         console.error('Error fetching ships:', error);
-//         res.status(500).send('Internal Server Error');
-//     }
-// })
-
 app.listen(PORT, (e) => {
     e
         ? console.error("Nos se ha podido conectar el servidor")
