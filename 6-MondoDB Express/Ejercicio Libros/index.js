@@ -92,7 +92,7 @@ function leer(titulo) {
 
 function borrar(titulo) {
     fetch(`/api/borrarLibro/${libro.titulo}`, {
-        method: "PUT"
+        method: "DELETE"
     })
     .then((res) => res.json())
     .then((datos) => {
