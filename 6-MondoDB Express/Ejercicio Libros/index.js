@@ -5,7 +5,6 @@ const PORT = process.env.PORT || 3000;
 
 app.use(express.urlencoded({extended: false}))
 app.use(express.json())
-app.use(express.static('public'))
 
 let client = new MongoClient('mongodb://127.0.0.1:27017');
 async function connectToMongo() {
@@ -74,16 +73,18 @@ const muestraLibros = (libros) => {
     libros.forEach(libro => lista += 
         `<li>
             ${libro.titulo}
-            <form action="/leer" method="post">
-                <input type="text" hidden name="titulo" value="${libro.titulo}" id="titulo">
-                <button type="submit">Marcar como leído</button>
-            </form>
-            <form action="/leer" method="post">
-                <input type="text" hidden name="titulo" value="${libro.titulo}" id="titulo">
-                <button type="submit">Marcar como leído</button>
-            </form>
+            <button type="submit" onclick="leer('${libro.titulo}')">Marcar como leído</button>
+            <button type="submit" onclick="eliminar('${libro.titulo}')">Eliminar</button>
         </li>`)
     return `<ul>${lista}</ul>`
+}
+
+function leer(titulo) {
+
+}
+
+function eliminar(titulo) {
+    
 }
 
 
