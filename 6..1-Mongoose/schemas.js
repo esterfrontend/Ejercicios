@@ -3,7 +3,6 @@ const mongoose = require('mongoose')
 const currentYear = new Date().getFullYear()
 
 const discoSchema = mongoose.Schema({
-    _id: mongoose.Schema.Types.ObjectId,
     titulo: {
         type: String,
         required: [true, 'Título del disco obligatorio']
@@ -30,7 +29,6 @@ const discoSchema = mongoose.Schema({
 
 
 const artistasSchema = mongoose.Schema({
-    _id: mongoose.Schema.Types.ObjectId,
     nombre: {
         type: String,
         required: [true, 'Nombre del artista obligatorio']
