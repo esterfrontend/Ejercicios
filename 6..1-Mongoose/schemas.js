@@ -47,7 +47,7 @@ const artistasSchema = mongoose.Schema({
     nombreArtistico: String
 })
 
-let Artista = mongoose.model('artista', artistasSchema,)
+let Artista = mongoose.model('artista', artistasSchema)
 let Disco = mongoose.model('disco', discoSchema)
 
 module.exports = {Artista, Disco}
