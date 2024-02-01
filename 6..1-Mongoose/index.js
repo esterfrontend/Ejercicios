@@ -15,8 +15,11 @@ mongoose.connect('mongodb://127.0.0.1:27017/ejercicios')
 
 app.get('/discos', async (req, res) => {
     try {
-        let resultado = await Disco.find()
-        res.send({mensaje: 'Aquí están los discos: ', resultado})
+        let resultado = await Disco.find({stock: {$gt: 0}})
+
+        resultado.length > 0
+        ? res.send({mensaje: 'Aquí están los discos: ', resultado})
+        : res.send({mensaje: 'No hay discos en stock.', resultado})
     } catch (error) {
         res.send({mensaje: 'Error: ', error})
     }
@@ -25,21 +28,21 @@ app.get('/discos', async (req, res) => {
 
 // 2. Recibir un disco en concreto que se pueda buscar por título o id
 
-app.get('/buscar-disco/:busqueda', async (req, res) => {
+app.get('/disco/:busqueda', async (req, res) => {
     try {
         const busqueda = req.params.busqueda
         
         let resultado;
         
         if(mongoose.Types.ObjectId.isValid(busqueda)) {
-            resultado = await Disco.findOne({_id : busqueda})
+            resultado = await Disco.findOne({_id : busqueda}).populate('artista')
         } else {
-            resultado = await Disco.findOne({titulo : busqueda})
+            resultado = await Disco.findOne({titulo : busqueda}).populate('artista')
         }
-        
+
         resultado
             ? res.send({mensaje: 'Aquí están los discos: ', resultado})
-            : res.send({mensaje: 'No existe el disco: ', busqueda})
+            : res.send({mensaje: 'No existe el disco: ', busqueda, resultado})
     } catch (error) {
         res.send({mensaje: 'Error: ', error})
     }
@@ -48,7 +51,7 @@ app.get('/buscar-disco/:busqueda', async (req, res) => {
 
 // 3. Añadir un disco a la base de datos, los campos marcados con asterisco son obligatorios.
 
-app.post('/nuevo-disco', async (req, res) => {
+app.post('/disco', async (req, res) => {
     try {
         const resultado = await Disco.create(req.body)
 
@@ -61,48 +64,22 @@ app.post('/nuevo-disco', async (req, res) => {
 
 // 4. Añadir un artista a la base de datos, los campos marcados con asterisco son obligatorios.
 
-app.post('/nuevo-artista', async (req, res) => {
+app.post('/artista', async (req, res) => {
     try {
-        const {nombre, genero, fechaNacimiento, nacionalidad, nombreArtistico} = req.body
+        const resultado = await Artista.create(req.body)
 
-        const nuevoArtista = new Disco({
-            _id: new mongoose.Types.ObjectId(),
-            nombre,
-            genero,
-            nacionalidad        
-        })
-
-        if(fechaNacimiento){
-            nuevoDisco.fechaNacimiento = fechaNacimiento
-        }
-        if(nombreArtistico){
-            nuevoDisco.nombreArtistico = nombreArtistico
-        }
-
-        nuevoArtista.save()
-            .then(console.log('Disco añadido'))
-            .catch((e) => console.log('Error en Disco', e))
-
-        res.send({mensaje: 'Disco eliminado: ', resultado})
+        res.send({mensaje: 'Artista eliminado: ', resultado})
     } catch (error) {
         res.send({mensaje: 'Error: ', error})
     }
 })
 
 
-// 5. Actualiza la información de un disco o de un artista
-app.put('/actualizar-disco', async (req, res) => {
-    try {
-        let resultado = await Artista.findByIdAndUpdate(id, req.body)
-        res.send({mensaje: 'Artista actualizado: ', resultado})
-    } catch (error) {
-        res.send({mensaje: 'Error: ', error})
-    }
-})
+// 5. Actualiza la información de un disco
 
-app.put('/actualizar-artista', async (req, res) => {
+app.put('/disco/:id', async (req, res) => {
     try {
-        let resultado = await Artista.findByIdAndUpdate(id, req.body)
+        let resultado = await Disco.findByIdAndUpdate(req.params.id, req.body, {new: true})
         res.send({mensaje: 'Disco actualizado: ', resultado})
     } catch (error) {
         res.send({mensaje: 'Error: ', error})
@@ -110,10 +87,21 @@ app.put('/actualizar-artista', async (req, res) => {
 })
 
 
-// 6. Borra un disco del almacén
-app.delete('/borrar-disco', async (req, res) => {
+// 5. Actualiza la información de un artista
+app.put('/artista/:id', async (req, res) => {
     try {
-        let resultado = await Disco.findOneAndDelete(req.body.id)
+        let resultado = await Artista.findByIdAndUpdate(req.params.id, req.body)
+        res.send({mensaje: 'Artista actualizado: ', resultado})
+    } catch (error) {
+        res.send({mensaje: 'Error: ', error})
+    }
+})
+
+
+// 6. Borra un disco del almacén
+app.delete('/disco/:id', async (req, res) => {
+    try {
+        let resultado = await Disco.findOneAndDelete(req.params.id)
         res.send({mensaje: 'Disco eliminado: ', resultado})
     } catch (error) {
         res.send({mensaje: 'Error: ', error})
@@ -123,9 +111,9 @@ app.delete('/borrar-disco', async (req, res) => {
 
 // 7. Borra un artista de la base de datos
 
-app.delete('/borrar-artista', async (req, res) => {
+app.delete('/artista/:id', async (req, res) => {
     try {
-        let resultado = await Artista.findOneAndDelete(req.body.id)
+        let resultado = await Artista.findOneAndDelete(req.params.id)
         res.send({mensaje: 'Disco eliminado: ', resultado})
     } catch (error) {
         res.send({mensaje: 'Error: ', error})
