@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+        .gallery-item img {
+            max-width: 200px;
+        }
+    </style>
+</head>
+<body>
+    <h2>Sube un archivo</h2>
+    <form action="/" method="post" enctype="multipart/form-data">
+        <input type="file" name="file" required>
+        <button type="submit">Subir</button>
+    </form>
+
+    <h2>Tus imágenes</h2>
+    <div id="images"></div>
+
+    <script>
+        fetch('/imagenes')
+            .then(res => res.json())
+            .then(data => {
+                let salida = ''
+                data.forEach(image => {
+                    salida += `
+                        <div class="gallery-item">
+                            <img src="${image.url}">
+                            <button type="button" onClick="window.location.href='${image.url}'" download="${image.nombre}">Descargar</button>
+                        </div>
+                    `
+                });
+                document.getElementById('images').innerHTML = salida
+            })
+            .catch(error => console.error('Error en la petición', error))
+
+    </script>
+</body>
+</html>
