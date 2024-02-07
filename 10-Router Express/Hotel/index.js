@@ -52,7 +52,7 @@ app.put('/editar-cliente', async (req, res) => {
 })
 
 
-// Checkin
+// Check in
 app.put('/checkin', async (req, res) => {
     try {
         let {cliente, habitacion} = req.body
@@ -90,7 +90,7 @@ app.put('/checkin', async (req, res) => {
     }
 })
 
-// Checkin
+// Check out
 app.put('/checkout', async (req, res) => {
     try {
         let {cliente} = req.body
@@ -130,19 +130,3 @@ app.listen(PORT, (e) => {
         ? console.error("Nos se ha podido conectar el servidor")
         : console.log("Servidor conectado y a la escucha en el puerto: " + PORT)
 })
-
-// {
-//     "nombre": "Lucía",
-//     "apellido": "Hernandez",
-//     "dni": 71961412
-// }
-
-// {
-//     "number": 101,
-//     "reservada": false
-// }
-
-// {
-//     "cliente" : 74931718,
-//     "number": 101
-// }
