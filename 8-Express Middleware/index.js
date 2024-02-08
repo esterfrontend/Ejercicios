@@ -1,21 +1,29 @@
 const express = require('express')
-const mongoose = require('mongoose')
-const {Artista, Disco} = require('./schemas')
 const app = express();
+const { MongoClient } = require('mongodb');
 const PORT = process.env.PORT || 3000;
+const cors = require('cors')
+const bcrypt = require('bcrypt')
 
-mongoose.connect('mongodb://127.0.0.1:27017/ejercicios')
-    .then(console.log('MongoDB está conectado'))
-    .catch(e => {
-        console.log('MongoDB no conectado: ' + e)
-    })
+// Conect to BBDD
+let client = new MongoClient('mongodb://127.0.0.1:27017');
+async function connectToMongo() {
+    try {
+        await client.connect().then((client)=>app.locals.db=client.db('ejercicios'))
+        console.log('Conectado a MongoDB');
+    } catch (error) {
+        console.error('Error al conectar MongoDB:', error);
+    }
+}
+connectToMongo()
 
+// Middleware
 app.use(express.urlencoded({ extended: false }))
 app.use(express.json())
+app.use(mostrarIpYRuta)
 
 
 // Cors
-const cors = require('cors')
 const corsOptions = {
     origin: 'http://www.midominio.es',
     methods: 'GET, HEAD, POST, DELETE'
@@ -23,48 +31,74 @@ const corsOptions = {
 app.use(cors(corsOptions))
 
 
-function mostrarIp(req, res, next) {
-    console.log('IP: ', req.ip)
-    next()
-}
-function mostrarRuta(req, res, next) {
-    console.log('URL: ', req.url)
-    next()
-}
-
-app.get('/', mostrarIp, mostrarRuta, (req, res)=> {
-    res.send('Get')
+app.get('/', async (req, res)=> {
+    try {
+        const results = await app.locals.db.collection('usuarios').find({}).toArray();
+        res.send({mensaje: 'Hola desde el GET', results})
+    }
+    catch (error) {
+        res.send({error})
+    }
 })
 
-app.post('/', mostrarIp, mostrarRuta,(req, res)=> {
-    res.send('Post')
+app.post('/registro', async (req, res)=> {
+    try {
+        const contrasenya = bcrypt.hashSync(req.body.password, 10)
+        const results = await app.locals.db.collection('usuarios').insertOne({
+            username: req.body.username,
+            password: contrasenya
+        })
+        res.send({mensaje: 'Hola desde el POST', results})
+    }
+    catch (error) {
+        res.send({error})
+    }
 })
 
+app.put('/editar', async (req, res)=> {
+    try {
+        console.log('body: ', req.body)
+        const contrasenya = bcrypt.hashSync(req.body.password, 10)
+        console.log('pass:', contrasenya)
+        const results = await app.locals.db.collection('usuarios').updateOne({username: req.body.username}, {$set: {password: contrasenya}})
+        res.send({mensaje: 'Usuario modificado', results})
+    }
+    catch (error) {
+        res.send({error})
+    }
+})
 
-// app.put('/', mostrarIp, mostrarRuta,(req, res)=> {
-//     const {primerPlato, segundoPlato, postre, precio} = req.body
-//     const numero = req.params.id
+app.delete('/eliminar', async (req, res)=> {
+    try {
+        const results = await app.locals.db.collection('usuarios').deleteOne({username: req.body.username});
+        res.send({mensaje: 'Usuario eliminado', results})
+    }
+    catch (error) {
+        res.send({error})
+    }
+})
 
-//     connection.query('UPDATE `menu` SET primerPlato = ?, segundoPlato = ?, postre = ?, precio = ? WHERE numero = ?', [primerPlato, segundoPlato, postre, precio, numero], (err, results)=> {
-//         err
-//         ? res.send({mensaje: 'Hay un error en la petición', err})
-//         : results.changedRows > 0
-//             ? res.send({mensaje: 'Menú modificado', results})
-//             : res.send({mensaje: 'No se ha podido modificar', results})
-//     })
-// })
+app.post('/login', async (req, res) => {
+    try {
+        let user = await app.locals.db.collection('usuarios').findOne({ username: req.body.username })
+        if (user && bcrypt.compareSync(req.body.password, user.password)) {
+            res.send({ mensaje: 'Logueado correctamente' })
+        } else {
+            res.send({ mensaje: 'Usuario o contraseña incorrectos' })
+        }
+    } catch (error) {
+        res.send({ mensaje: "Error al registrar al usuario", error })
+    }
+})
 
-// app.delete('/', mostrarIp, mostrarRuta,(req, res)=> {
-//     connection.query('DELETE FROM `menu` WHERE numero = ?', [req.params.id], (err, results)=> {
-//         err
-//         ? res.send({mensaje: 'Hay un error en la petición', err})
-//         : results.changedRows > 0
-//             ? res.send({mensaje: 'Menú eliminado', results})
-//             : res.send({mensaje: 'No se ha podido eliminar', results})
-//     })
-// })
-
-
+function mostrarIpYRuta(req, res, next) {
+    console.log({
+        Method: req.method,
+        IP: req.ip, 
+        URL: req.url
+    })
+    next()
+}
 
 app.listen(PORT, (e) => {
     e
