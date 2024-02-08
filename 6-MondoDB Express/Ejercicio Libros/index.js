@@ -18,15 +18,18 @@ async function connectToMongo() {
 
 connectToMongo()
 
+app.use(express.static('public'))
+
 app.get('/api/libros', async (req, res) => {
     try {
         const results = await app.locals.db.collection('libros').find({}).toArray();
-        res.send(muestraLibros(results));
+        res.send(results);
     } catch (error) {
         console.error('Error fetching ships:', error);
         res.status(500).send('Internal Server Error');
     }
 })
+
 
 app.get('/api/libros/:titulo', async (req, res) => {
     try {
@@ -67,38 +70,6 @@ app.delete('/api/borrarLibro/:titulo', async (req, res) => {
         res.status(500).send('Internal Server Error');
     }
 })
-
-const muestraLibros = (libros) => {
-    let lista = ''
-
-    libros.forEach(libro => lista += 
-        `<li>
-            ${libro.titulo}
-            <button type="submit" onclick="leer('${libro.titulo}')">Marcar como leído</button>
-            <button type="submit" onclick="borrar('${libro.titulo}')">Borrar</button>
-        </li>`)
-    return `<ul>${lista}</ul>`
-}
-
-function leer(titulo) {
-    fetch(`/api/editarLibro/${libro.titulo}`, {
-        method: "PUT"
-    })
-    .then((res) => res.json())
-    .then((datos) => {
-        console.log(datos)
-    })
-}
-
-function borrar(titulo) {
-    fetch(`/api/borrarLibro/${libro.titulo}`, {
-        method: "DELETE"
-    })
-    .then((res) => res.json())
-    .then((datos) => {
-        console.log(datos)
-    })
-}
 
 
 app.listen(PORT, (e) => {

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Libros</title>
+    <style>
+        body {
+            margin: 50px;
+        }
+        
+        h2 {text-align: center;}
+
+        #libros {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            list-style: none;
+            padding: 0;
+            gap: 30px;
+        }
+
+        li {
+            text-align: center;
+            border: 1px solid #f1f1f1;
+            padding: 15px;
+        }
+
+        button {
+            margin: 10px 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Mis libros</h2>
+    <ul id="libros"></ul>
+
+    <div id="mensaje"></div>
+
+
+    <script>
+        fetch('/api/libros')
+            .then((res) => res.json())
+            .then((datos) => { 
+                let salida = ""
+                datos.forEach(libro => {
+                    salida += `<li><strong>${libro.titulo}</strong> <br> ${libro.leido ? 'Leído' : 'No leído'}<br>`
+                    if (!libro.leido) {
+                        salida += `<button type="button" onclick="leer('${libro.titulo}')">Marcar como leído</button>`
+                    }
+                    salida += `<button type="button" onclick="borrar('${libro.titulo}')">Borrar</button></li>`
+                });
+
+                document.getElementById('libros').innerHTML = salida
+            })
+
+
+        function leer(titulo) {
+            fetch(`/api/editarLibro/${titulo}`, {
+                method: "PUT"
+            })
+            .then((res) => res.json())
+            .then((datos) => {
+                document.getElementById('mensaje').innerHTML = `"${titulo}" ha sido marcado como leído`
+            })
+        }
+
+        function borrar(titulo) {
+            fetch(`/api/borrarLibro/${titulo}`, {
+                method: "DELETE"
+            })
+                .then((res) => res.json())
+                .then((datos) => {
+                    document.getElementById('mensaje').innerHTML = `"${titulo}" ha sido eliminado`
+                })
+        }
+
+    </script>
+</body>
+</html>
