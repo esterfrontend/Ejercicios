@@ -49,22 +49,6 @@ const patataSchema = mongoose.Schema({
 })
 
 const pedidoSchema = mongoose.Schema({
-    menu: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'menu',
-    },
-    hamburguesa: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'hamburguesa',
-    },
-    bebida: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'bebida',
-    },
-    patata: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'patata',
-    },
 })
 
 

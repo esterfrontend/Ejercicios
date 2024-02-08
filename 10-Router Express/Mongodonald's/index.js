@@ -15,23 +15,58 @@ app.use(express.urlencoded({ extended: false }))
 app.use(express.json())
 app.use(express.static('public'))
 
-app.get('/hamburguesa', async (req, res) => {
+
+app.get('/menu', async (req, res) => {
     try {
-        const result = await Hamburguesa.find()
-        res.send({mensaje: 'Hamburguesas:', result})
+        const menu = await Menu.find()
+        const bebida = await Bebida.find()
+        const patatas = await Patata.find()
+        res.send({menu, bebida, patatas })
     } catch (error) {
         res.send({mensaje: 'Error', error})
     }
 })
 
-app.get('/patatas', async (req, res) => {
+app.get('/hamburguesa', async (req, res) => {
     try {
-        const result = await Patata.find()
-        res.send({mensaje: 'Patatas:', result})
+        const hamburguesa = await Hamburguesa.find()
+        const patatas = await Patata.find()
+        res.send({hamburguesa, patatas})
     } catch (error) {
         res.send({mensaje: 'Error', error})
     }
 })
+
+app.get('/bebida', async (req, res) => {
+    try {
+        const bebida = await Bebida.find()
+        res.send({mensaje: 'Bebida:', bebida})
+    } catch (error) {
+        res.send({mensaje: 'Error', error})
+    }
+})
+
+app.post('/terminar-pedido', async (req, res) => {
+    try {
+        const pedido = await Pedido.create(req.body.pedido)
+        res.send({mensaje: "Pedido: ", pedido})
+    } catch (error) {
+        res.send({mensaje: 'Error', error})
+    }
+})
+
+app.put('/editar-pedido/:id', async (req, res) => {
+    try {
+        const pedido = await Pedido.updateOne(
+            {numero: req.params.id}, 
+            {$set: {articulos: req.body.articulos}})
+        res.send({mensaje: "Pedido modificado: ", pedido})
+    } catch (error) {
+        res.send({mensaje: 'Error', error})
+    }
+})
+
+
 
 
 app.listen(PORT, (e) => {

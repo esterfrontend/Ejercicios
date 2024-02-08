@@ -30,6 +30,12 @@
             gap: 20px;
             margin-top: 50px
         }
+
+        #cart-button, #mensaje {
+            text-align: center;
+            margin-top: 30px;
+        }
+        
     </style>
 </head>
 <body>
@@ -38,52 +44,174 @@
         <button type="button" onclick="menu()">Pedir menú</button>
         <button type="button" onclick="hamburguesa()">Pedir hamburguesa</button>
         <button type="button" onclick="bebida()">Pedir bebida</button>
-        <button type="button" onclick="terminar()">Terminar pedido</button>
+        <button type="button" onclick="terminarPedido()">Terminar pedido</button>
+        <button type="button" onclick="editarPedido()">Editar pedido</button>
     </div>
 
     <div id="options">
         <div id="menu"></div>
         <div id="hamburguesa"></div>
-        <div id="patatas"></div>
         <div id="bebida"></div>
+        <div id="patatas"></div>
     </div>
     <div id="cart-button">
-        
     </div>
 
+    <div id="mensaje"></div>
 
     <script>
+        
+        function menu() {
+            document.getElementById("cart-button").innerHTML = ""
+            document.getElementById('hamburguesa').innerHTML = ""
+
+            fetch('/menu')
+                .then(res => res.json())
+                .then(datos => {
+                    crearSelector(datos.menu, 'menu', 'Elige tu menú')
+                    crearSelector(datos.bebida, 'bebida', 'Elige tu bebida', true)
+                    crearSelector(datos.patatas, 'patatas', 'Elige tus patatas', true)
+            })
+        }
+        
         function hamburguesa() {
+            document.getElementById("cart-button").innerHTML = ""
+            document.getElementById('menu').innerHTML = ""
+            document.getElementById('bebida').innerHTML = ""
             fetch('/hamburguesa')
                 .then(res => res.json())
                 .then(datos => {
-                    crearSelector('Elige tu hamburguesa', datos)
-
-                    fetch('/patatas')
-                        .then(res => res.json())
-                        .then(datos => {
-                            datos.result.push({
-                                nombre: 'No quiero patatas',
-                                precio: 0
-                            })
-                            crearSelector('¿Quieres patatas?', datos)
-                    })
+                    console.log(datos)
+                    crearSelector(datos.hamburguesa, 'hamburguesa', 'Elige tu hamburguesa')
+                    crearSelector(datos.patatas, 'patatas', 'Elige tus patatas')
             })
         }
 
-        function crearSelector(text, datos) {
-            let options = ""
-            datos.result.forEach(elemento => {
-            options += `
-            <option value="${elemento.nombre}">
-                ${elemento.nombre}, ${elemento.precio} €
-            </option>`});
+        function bebida() {
+            document.getElementById("cart-button").innerHTML = ""
+            document.getElementById('menu').innerHTML = ""
+            document.getElementById('hamburguesa').innerHTML = ""
+            document.getElementById('patatas').innerHTML = ""
+            fetch('/bebida')
+                .then(res => res.json())
+                .then(datos => {
+                    crearSelector(datos.bebida, 'bebida', 'Elige tu bebida')
+            })
+        }
 
-            const container = document.getElementById('options')
-            const select = document.createElement('select')
-            select.classList.add('select');
-            select.innerHTML = `<select name="select"> <option selected="true" disabled="true">${text}</option>${options}</select>`
-            container.appendChild(select);
+
+        function crearSelector(datos, type, text, free = false) {
+            let options = ""
+            datos.forEach(elemento => {
+                options += `
+                <option value="${elemento.nombre}" data-price="${free ? '0': elemento.precio}">
+                    ${elemento.nombre}, ${free ? '0': elemento.precio} €
+                </option>`
+            });
+
+            document.getElementById(type).innerHTML = `<select class="select" onchange="elegirArticulo()" name="${type}"> <option selected="true" disabled="true" value="">${text}</option>${options}</select>`
+        }
+
+        function elegirArticulo() {
+            const selects = document.querySelectorAll('.select');
+
+            let todoSeleccionado = true;
+            selects.forEach(select => {
+                if (select.value === '') {
+                    todoSeleccionado = false;
+                }
+            });
+
+            if (todoSeleccionado) {
+                document.getElementById("cart-button").innerHTML = `<button onclick="carrito()">Añadir al carrito</button>`
+            }
+        }
+
+        // Supongo que añado estos artículos
+        const pedido = [{
+            articulos: {
+                0: {
+                    nombre: 'Grand Big Mongo',
+                    precio: 6
+                },
+                1: {
+                    nombre: 'Cuarto de Mongo',
+                    precio: 7
+                },
+                2: {
+                    nombre: 'Agua',
+                    precio: 0
+                },
+                3: {
+                    nombre: 'MongoFries',
+                    precio: 0
+                },
+                4: {
+                    nombre: 'MongoCola',
+                    precio: 2
+                }
+            }
+        }]
+
+        const pedidoModificado = [{
+            articulos: {
+                0: {
+                    nombre: 'Grand Big Mongo',
+                    precio: 6
+                },
+                1: {
+                    nombre: 'Cuarto de Mongo',
+                    precio: 7
+                },
+                2: {
+                    nombre: 'MongoCola',
+                    precio: 0
+                },
+                3: {
+                    nombre: 'MongoFries',
+                    precio: 0
+                },
+                4: {
+                    nombre: 'MongoCola',
+                    precio: 2
+                }
+            }
+        }]
+
+        function carrito() {
+            document.getElementById('mensaje').innerHTML = `Pedido añadido al carrito`
+        }
+
+        let idPedido = ''
+
+        function terminarPedido() {
+            fetch('/terminar-pedido', {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ pedido})
+            })
+                .then((res) => res.json())
+                .then((datos) => {
+                    console.log(datos)
+                    idPedido = datos.pedido[0]._id
+                    console.log(idPedido)
+                })
+        }
+
+        function editarPedido() {
+            fetch(`/editar-pedido/${idPedido}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ pedidoModificado })
+            })
+                .then((res) => res.json())
+                .then((datos) => {
+                    console.log(datos)      
+                })
         }
 
     </script>
