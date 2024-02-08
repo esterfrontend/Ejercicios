@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mondodonald's</title>
+
+    <style>
+        h1 {
+            text-align: center;
+        }
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px
+        }
+
+        button {
+            font-size: 1.1rem;
+            padding: 8px 12px;
+        }
+
+        button:hover {
+            cursor: pointer;
+        }
+
+        #options {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 50px
+        }
+    </style>
+</head>
+<body>
+    <h1>MondoDonald's</h1>
+    <div class="buttons">
+        <button type="button" onclick="menu()">Pedir menú</button>
+        <button type="button" onclick="hamburguesa()">Pedir hamburguesa</button>
+        <button type="button" onclick="bebida()">Pedir bebida</button>
+        <button type="button" onclick="terminar()">Terminar pedido</button>
+    </div>
+
+    <div id="options">
+        <div id="menu"></div>
+        <div id="hamburguesa"></div>
+        <div id="patatas"></div>
+        <div id="bebida"></div>
+    </div>
+    <div id="cart-button">
+        
+    </div>
+
+
+    <script>
+        function hamburguesa() {
+            fetch('/hamburguesa')
+                .then(res => res.json())
+                .then(datos => {
+                    crearSelector('Elige tu hamburguesa', datos)
+
+                    fetch('/patatas')
+                        .then(res => res.json())
+                        .then(datos => {
+                            datos.result.push({
+                                nombre: 'No quiero patatas',
+                                precio: 0
+                            })
+                            crearSelector('¿Quieres patatas?', datos)
+                    })
+            })
+        }
+
+        function crearSelector(text, datos) {
+            let options = ""
+            datos.result.forEach(elemento => {
+            options += `
+            <option value="${elemento.nombre}">
+                ${elemento.nombre}, ${elemento.precio} €
+            </option>`});
+
+            const container = document.getElementById('options')
+            const select = document.createElement('select')
+            select.classList.add('select');
+            select.innerHTML = `<select name="select"> <option selected="true" disabled="true">${text}</option>${options}</select>`
+            container.appendChild(select);
+        }
+
+    </script>
+</body>
+</html>
