@@ -34,8 +34,7 @@ app.post('/api/nuevoMenu', async (req, res)=>{
     try {
         const {numero, primerPlato, segundoPlato, postre, precio} = req.body
         const results = await app.locals.db.collection('menus').insertOne({numero, primerPlato, segundoPlato, postre, precio})
-        const menus = await app.locals.db.collection('menus').find({}).toArray();
-        res.send({mensaje: "Nueva serie añadida.", results, menus})
+        res.send({mensaje: "Nueva serie añadida.", results})
     } catch (error) {
         console.error('Error en la petición')
         res.status(500).send('Internal Server Error')
@@ -58,8 +57,11 @@ app.put('/api/editarMenu', async(req,res)=>{
 
 app.delete('/api/borrarMenu', async (req, res) => {
     try {
+        console.log(req.body)
         const results = await app.locals.db.collection('menus').deleteOne({numero: parseInt(req.body.numero)});
-        res.send({mensaje: "Eliminado.", results});
+        results.deletedCount === 0
+            ? res.send({mensaje: `El menú ${req.body.numero} no ha podido eliminarse`})
+            : res.send({mensaje: "Eliminado.", results})
     } catch (error) {
         console.error('Error fetching ships:', error);
         res.status(500).send('Internal Server Error');

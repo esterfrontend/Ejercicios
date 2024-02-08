@@ -4,8 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Menús</title>
+    <style>
+        #listado {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            padding: 30px;
+            background-color: #f4f4f4;
+            border: 1px solid #e8e8e8;
+            margin-bottom: 60px;
+            list-style: none;
+        }
+    </style>
 </head>
 <body>
+    <h2>Menús:</h2>
+    <ul id="listado"></ul>
+
+    <div id="mensaje"></div>
+
     <h2>Añade un nuevo menú:</h2>
     <form action="/api/nuevoMenu" method="post">
         <input type="number" id="numero" name="numero" min="1" placeholder="Nº">
@@ -16,45 +32,22 @@
         <input type="submit" value="Guardar menú">
     </form>
 
-    <h2>Modifica un menú:</h2>
-    <form>
-        <input type="number" id="modificaNumero" name="numero" min="1" placeholder="Nº">
-        <input type="text" id="modificaPrimerPlato" name="primerPlato" placeholder="primerPlato">
-        <input type="text" id="modificaSegundoPlato" name="segundoPlato" placeholder="segundoPlato">
-        <input type="text" id="modificaPostre" name="postre" placeholder="postre">
-        <input type="number" id="modificaPrecio" name="precio" placeholder="precio" min="0">
-        <button type="button" onclick="modificar()">Modificar menú</button>
-    </form>
-
-    <h2>Elimina un menú:</h2>
-    <form>
-        <input type="number" id="borrarNumero" name="numero" min="1" placeholder="Nº">
-        <button type="button" onclick="borrar()">Borrar menú</button>
-    </form>
-
-    <h2>Lista de menús:</h2>
-    <ul id="listado">
-
-    </ul>
-
     <script>
-        function modificar() {
-            fetch('/api/editarMenu', {
-                method: "PUT"
-            })
-            .then((res) => res.json())
-            .then((datos) => {
-                console.log(datos)
-            })
-        }
 
-        function borrar() {
+        function borrar(menu) {
             fetch('/api/borrarMenu', {
-                method: "DELETE"
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    numero: menu
+                })
             })
             .then((res) => res.json())
             .then((datos) => {
                 console.log(datos)
+                document.getElementById('mensaje').innerHTML = ``
             })
         }
 
@@ -63,8 +56,8 @@
         .then((datos) => { 
             let salida = ""
             datos.results.forEach(menu => {
-            salida += `<li>${menu.numero} <br> ${menu.primerPlato} <br> ${menu.segundoPlato} <br> ${menu.postre} <br> ${menu.precio} <br>
-                <button type="button">Borrar</button></li>`
+            salida += `<li><strong>Menú ${menu.numero} </strong><br> ${menu.primerPlato} <br> ${menu.segundoPlato} <br> ${menu.postre} <br> ${menu.precio} <br>
+                <button type="button" onclick="borrar(${menu.numero})">Borrar</button></li>`
             });
 
             document.getElementById('listado').innerHTML = salida
